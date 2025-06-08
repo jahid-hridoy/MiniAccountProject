@@ -1,0 +1,29 @@
+﻿@page
+@model MiniAccountProject.Pages.Admin.Vouchers.IndexModel
+@{
+    ViewData["Title"] = "Vouchers";
+}
+
+<h2>Voucher List</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Voucher ID</th>
+            <th>Date</th>
+            <th>Reference No</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var voucher in Model.Vouchers)
+        {
+            <tr>
+                <td>@voucher.VoucherId</td>
+                <td>@voucher.VoucherDate</td>
+                <td>@voucher.ReferenceNo</td>
+                <td>@voucher.VoucherType</td>
+            </tr>
+        }
+    </tbody>
+</table>

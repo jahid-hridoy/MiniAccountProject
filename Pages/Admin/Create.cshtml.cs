@@ -38,7 +38,16 @@ namespace MiniAccountProject.Pages.Admin
             if (!ModelState.IsValid)
                 return Page();
 
-            // Call stored procedure
+            var table = new DataTable();
+            table.Columns.Add("AccountId", typeof(int));
+            table.Columns.Add("Debit", typeof(decimal));
+            table.Columns.Add("Credit", typeof(decimal));
+
+            foreach (var entry in Voucher.Entries)
+            {
+                table.Rows.Add(entry.AccountId, entry.Debit, entry.Credit);
+            }
+
             using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             using var cmd = new SqlCommand("sp_SaveVoucher", conn);
             cmd.CommandType = CommandType.StoredProcedure;
@@ -47,16 +56,18 @@ namespace MiniAccountProject.Pages.Admin
             cmd.Parameters.AddWithValue("@ReferenceNo", Voucher.ReferenceNo);
             cmd.Parameters.AddWithValue("@VoucherType", Voucher.VoucherType);
 
-            // You would pass the debit/credit entries as a table-valued parameter or XML/JSON string
-            // Here we simplify: just showing the concept
+            var tvpParam = cmd.Parameters.AddWithValue("@Entries", table);
+            tvpParam.SqlDbType = SqlDbType.Structured;
+            tvpParam.TypeName = "dbo.VoucherEntryType";
 
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            TempData["Message"] = "Voucher saved!";
-            return RedirectToPage("Index");
+            TempData["Message"] = "Voucher saved using TVP!";
+            return RedirectToPage("/Admin/AdminOnly");
         }
+
 
         public class VoucherInputModel
         {

@@ -132,7 +132,7 @@ namespace MiniAccountProject.Areas.Identity.Pages.Account
                     if (roles.Contains("Admin"))
                     {
                         _logger.LogInformation("Redirecting to AdminOnly.");
-                        return RedirectToPage("/AdminOnly");
+                        return RedirectToPage("/Admin/AdminOnly");
                     }
                     else if (roles.Contains("Accountant"))
                     {
