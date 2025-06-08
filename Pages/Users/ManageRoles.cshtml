@@ -1,0 +1,37 @@
+﻿@page
+@model ManageRolesModel
+@{
+    ViewData["Title"] = "Manage User Roles";
+}
+
+<h2>Manage User Roles</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Current Roles</th>
+            <th>Change Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>@item.User.Email</td>
+                <td>@string.Join(", ", item.Roles)</td>
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="userId" value="@item.User.Id" />
+                        <select name="newRole" class="form-control">
+                            <option value="Admin">Admin</option>
+                            <option value="Accountant">Accountant</option>
+                            <option value="Viewer">Viewer</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm mt-1">Change</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -21,12 +21,18 @@ namespace MiniAccountProject.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            SignInManager<IdentityUser> signInManager,
+            ILogger<LoginModel> logger,
+            UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -104,37 +110,61 @@ namespace MiniAccountProject.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user == null)
+                    {
+                        _logger.LogWarning("Logged in user not found.");
+                        await _signInManager.SignOutAsync();
+                        return RedirectToPage("/Error");
+                    }
+
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    if (roles.Contains("Admin"))
+                    {
+                        _logger.LogInformation("Redirecting to AdminOnly.");
+                        return RedirectToPage("/AdminOnly");
+                    }
+                    else if (roles.Contains("Accountant"))
+                    {
+                        _logger.LogInformation("Redirecting to AccountantOnly.");
+                        return RedirectToPage("/AccountantOnly");
+                    }
+                    else if (roles.Contains("Viewer"))
+                    {
+                        _logger.LogInformation("Redirecting to ViewerOnly.");
+                        return RedirectToPage("/ViewerOnly");
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
-                }
+
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
-            // If we got this far, something failed, redisplay form
-            return Page();
+            return Page(); // redisplay form
         }
+
+
     }
 }

@@ -1,0 +1,45 @@
+﻿@page
+@model MiniAccountProject.Pages.Permissions.ManageModel
+@{
+    ViewData["Title"] = "Manage Module Permissions";
+}
+
+<h2>Module Access by Role</h2>
+
+<form method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Module</th>
+                @for (int i = 0; i < Model.Roles.Count; i++)
+                {
+                    <th>@Model.Roles[i]</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int m = 0; m < Model.Modules.Count; m++)
+            {
+                var module = Model.Modules[m];
+                <tr>
+                    <td>@module.ModuleName</td>
+                    @for (int r = 0; r < Model.Roles.Count; r++)
+                    {
+                        var roleName = Model.Roles[r];
+                        var isChecked = module.RoleAccess[roleName];
+
+                        <td>
+                            <input type="checkbox"
+                                   name="Updates[@(m* Model.Roles.Count + r)].CanAccess"
+                                   value="true"
+                                   @(isChecked ? "checked" : "") />
+                            <input type="hidden" name="Updates[@(m* Model.Roles.Count + r)].RoleId" value="@roleName" />
+                            <input type="hidden" name="Updates[@(m* Model.Roles.Count + r)].ModuleId" value="@module.ModuleId" />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save Permissions</button>
+</form>

@@ -1,0 +1,27 @@
+﻿@page
+@model ViewerOnlyModel
+@{
+    ViewData["Title"] = "Viewer Only Accounts";
+}
+
+<h2>Accounts Overview</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Account Name</th>
+            <th>Balance</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @* @foreach (var account in Model.Accounts)
+        {
+            <tr>
+                <td>@account.Name</td>
+                <td>@account.Balance.ToString("C")</td>
+                <td>@account.CreatedAt.ToShortDateString()</td>
+            </tr>
+        } *@
+    </tbody>
+</table>
