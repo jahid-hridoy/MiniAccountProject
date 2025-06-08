@@ -1,0 +1,43 @@
+﻿@page
+@model MiniAccountProject.Pages.Admin.CreateModel
+@{
+    ViewData["Title"] = "New Voucher Entry";
+}
+
+<h2>Create Voucher</h2>
+
+<form method="post">
+    <div>
+        <label>Date:</label>
+        <input type="date" asp-for="Voucher.Date" />
+    </div>
+    <div>
+        <label>Reference No:</label>
+        <input asp-for="Voucher.ReferenceNo" />
+    </div>
+    <div>
+        <label>Voucher Type:</label>
+        <select asp-for="Voucher.VoucherType">
+            <option value="Journal">Journal</option>
+            <option value="Payment">Payment</option>
+            <option value="Receipt">Receipt</option>
+        </select>
+    </div>
+
+    <h4>Entries</h4>
+    @for (int i = 0; i < Model.Voucher.Entries.Count; i++)
+    {
+        <div>
+            <select asp-for="Voucher.Entries[@i].AccountId">
+                @foreach (var acc in Model.Accounts)
+                {
+                    <option value="@acc.Id">@acc.Name</option>
+                }
+            </select>
+            <input asp-for="Voucher.Entries[@i].Debit" placeholder="Debit" />
+            <input asp-for="Voucher.Entries[@i].Credit" placeholder="Credit" />
+        </div>
+    }
+
+    <button type="submit">Save Voucher</button>
+</form>

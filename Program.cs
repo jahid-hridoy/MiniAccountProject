@@ -20,6 +20,9 @@ builder.Services.AddRazorPages(options =>
 builder.Services.AddScoped<RoleSeeder>();
 // Register the RoleSeeder service
 
+builder.Services.AddScoped<ChartOfAccountService>();
+// Register the ChartOfAccountService for managing chart of accounts
+
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 // Register the EmailSender service for sending emails
 

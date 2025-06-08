@@ -1,0 +1,26 @@
+﻿@page
+@model AdminOnlyModel
+<h2>Admin Dashboard</h2>
+<a asp-page="/Users/ManageRoles">Manage Roles</a>
+<form method="post" asp-page-handler="Create" class="mb-4 border p-3 rounded bg-light">
+    <div class="mb-2">
+        <label>Name</label>
+        <input asp-for="FormModel.Name" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Code</label>
+        <input asp-for="FormModel.Code" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Parent Account (Optional)</label>
+        <select asp-for="FormModel.ParentId" asp-items="Model.ParentOptions" class="form-control">
+            <option value="">-- Root Level --</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Account</button>
+</form>
+
+<h4>Chart of Accounts</h4>
+<div>
+    @await Html.PartialAsync("_ChartTreePartial", Model.AccountsTree)
+</div>

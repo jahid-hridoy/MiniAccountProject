@@ -1,0 +1,17 @@
+﻿@model List<ChartOfAccount>
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            <b>@item.Code</b> - @item.Name
+            <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+            @if (item.Children?.Count > 0)
+            {
+                @await Html.PartialAsync("_ChartTreePartial", item.Children)
+            }
+        </li>
+    }
+</ul>
